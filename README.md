@@ -27,12 +27,12 @@ All projects will require the following:
 ## Phase 0: Force Selection, Analysis & Plan
 ---------- 
 
-#### Custom Force: NAME OF YOUR FORCE
+#### Custom Force: POWER OF FRIENDSHIP
 
 ### Custom Force Formula
 What is the formula for your force? Including descriptions/definitions for the symbols. (You may include a picture of the formula if it is not easily typed.)
 
-YOUR ANSWER HERE
+
 
 ### Custom Force Breakdown
 - What information that is already present in the `Orb` or `OrbNode` classes does this force use?
@@ -55,31 +55,41 @@ YOUR ANSWER HERE
 ### Simulation 1: Gravity
 Describe how you will attempt to simulate orbital motion.
 
+An object in orbit has velocity in a linear direction, but its acceleration vector is perpendicular to its velocity vector, and towards the COM (whatever the smaller object is orbiting around) <-- centripedal motion!
+To simulate this:
+- one fixed orb, smaller, less mass orb w an initial velocity.
+- use the gravitational attraction equation to apply an acceleration on the smaller orb towards the fixed orb.
 --- 
 
 ### Simulation 2: Spring
 Describe what your spring simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+Similar to lab, using f = kx
+- simulate longitudual waves also?
 
 --- 
 
 ### Simulation 3: Drag
 Describe what your drag simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+wind tunnel simulation!
+orb/teardrop/rectangle/fighter jet looking thing <-- choose which one you want
+you can toggle whether or not drag is activated, and you can see its speed change!
 
 --- 
 
 ### Simulation 4: Custom force
 Describe what your Custom force simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+the POWER OF FRIENDSHIP!
+
+- each orb has a certain material
+- orbs of the same material have more of an attraction to each other. 
+
 
 --- 
 
 ### Simulation 5: Combination
 Describe what your combination simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
 

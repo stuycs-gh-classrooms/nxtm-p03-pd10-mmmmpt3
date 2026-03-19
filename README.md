@@ -76,19 +76,19 @@ similar to lab, multiple orbs connected by springs in a chain or network structu
 ### Simulation 3: Drag
 Describe what your drag simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+The drag simulation will contain elements from both the lab and w58_orb. The idea discussed during class was to make a "wind tunnel" in order to have visual indications that  can clearly show drag force being implemented. Another option is to have a similar setup to w58 with having the lowr half be the fluid that once teh orbs reach the drag force is implemented. Of course with DragForce, gravity must be present for anything to "actually" happen. While running the orbs, must slow down as the force "pushes" in the direction opposite the velocity of the orbs.
 
 --- 
 
 ### Simulation 4: Custom force
 Describe what your Custom force simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+The custom force simulation would include all the orbs lined up in a row. There will be toggles to turn both moving ON and custom force ON. As described above, while running, the orbs will visually be experincing a force from its neighbors as there is a conflic level between two orbs meaning we have to account for all possible pairs of orbs.   
 
 --- 
 
 ### Simulation 5: Combination
 Describe what your combination simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+A combination would be gravity, spring force, and our custom force. Set up would either be the same as the lab where there is a fixed object present where the gravity is accounted from or have the orbs be randomly faced with toggles to turn ON each force. The behavor of this simulation isnt clear yet as our custom force hasnt been planned out clearly yet. Though, a possibility is that it might behave in a similar manner of when you Toggle ON gravity and spring just that the orbs will interact with each other. 
 

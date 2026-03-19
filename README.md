@@ -32,35 +32,44 @@ All projects will require the following:
 ### Custom Force Formula
 What is the formula for your force? Including descriptions/definitions for the symbols. (You may include a picture of the formula if it is not easily typed.)
 
-YOUR ANSWER HERE
+Power of Friendship (POF) force:
+
+equation:
+Fpof = k * (p1p2/r^2) - C
 
 ### Custom Force Breakdown
 - What information that is already present in the `Orb` or `OrbNode` classes does this force use?
-  - YOUR ANSWER HERE
+  - the posiiton of the orb, which is what is used to calculate the radius
+  - the mass of the orb
 
 - Does this force require any new constants, if so what are they and what values will you try initially?
-  - YOUR ANSWER HERE
+  - we need a conflict level between two orbs
 
 - Does this force require any new information to be added to the `Orb` class? If so, what is it and what data type will you use?
-  - YOUR ANSWER HERE
+  - yes, it requires orbs to have beef with each other
+    how this works is that every orb creates a sorted ranking list of their favorite other orbs in the system, whcih is stored as an array within themselves (best->worst orb). Then, when calculating the force between orb i and j, we will find the index of orb j in orb i's ranking, and convert that index into a conflict value C.
 
 - Does this force interact with other `Orbs`, or is it applied based on the environment?
-  - YOUR ANSWER HERE
+  each orb experiences a force due to every other orb in the system. the behavior of each orb is determined by its neighbors. 
 
 - In order to calculate this force, do you need to perform extra intermediary calculations? If so, what?
-  - YOUR ANSWER HERE
-
+ distance between two forces: distance formula
+ranking lookup, determine the position of one Orb in another Orb’s ranked list
+conflict calculation
+final force computation
 --- 
 
 ### Simulation 1: Gravity
 Describe how you will attempt to simulate orbital motion.
+
+by using centripedal acceleration (giving every orb velocity but then an acceleration vector perpendicular to it) and putting a fixed, very massive orb in the center.
 
 --- 
 
 ### Simulation 2: Spring
 Describe what your spring simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-YOUR ANSWER HERE
+similar to lab, multiple orbs connected by springs in a chain or network structure. while running, strings will apply force based on how much they are stretched or compressed relative to their length. The system should oscillate.
 
 --- 
 

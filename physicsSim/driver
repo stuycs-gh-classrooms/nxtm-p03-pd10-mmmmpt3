@@ -1,0 +1,53 @@
+void setup(){
+  size(800,800);
+}
+
+void draw(){
+  runStart();
+}
+
+void runStart(){
+  background(184, 211, 255);
+  textSize(50);
+  text("A Variety of Physics Simulations", 70,80);
+  textSize(30);
+  text("Controls:", 150, 150);
+  text("Press 1 for Simulation 1, Gravity", 150, 200);
+  text("Press 2 for Simulation 2, Spring", 150, 250);
+  text("Press 3 for Simulation 3, Drag", 150, 300);
+  text("Press 4 for Simulation 4, Combination", 150, 350);
+  text("Press 5 for the House Party Simulation", 150, 400);
+}
+
+void keyPressed(){
+  if (key == '1'){
+    runGravity();
+  }
+  if (key == '2'){
+    runSpring();
+  }
+  if (key == '3'){
+    runDrag();
+  }
+  if (key == '4'){
+    runCombo();
+  }
+  if (key == '5'){
+    runHouseParty();
+  }
+}
+
+void runGravity(){
+}
+
+void runSpring(){
+}
+
+void runDrag(){
+}
+
+void runCombo(){
+}
+
+void runHouseParty(){
+}

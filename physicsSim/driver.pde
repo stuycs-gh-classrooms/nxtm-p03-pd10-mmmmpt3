@@ -11,6 +11,7 @@ boolean[] toggles = new boolean[7];
 FixedOrb sun;
 Orb[] planets;
 Orb[] springs;
+Orb[] friends;
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
 int MAX_SIZE = 60;
@@ -28,6 +29,7 @@ void setup() {
   for (int i = 0; i < toggles.length; i++) {
     toggles[i] = false;
   }
+  runStart();
  
 }
 
@@ -55,7 +57,7 @@ void GravitySetup(){
   for (int i = 0; i < planets.length; i++) { //this i am so confused abt we need to fix this tomorrow
        float r = planets[i].center.dist(sun.center);
     float v = sqrt(G_CONSTANT * sun.mass / r);
-    //planets[i].velocity = new PVector(0, -v);
+    planets[i].velocity = new PVector(-v, 0);
     // perpendicular velocity
   }
 }
@@ -80,8 +82,6 @@ void draw() {
   }
   if (toggles[SPRING]) {
     runSpring();
-  }
-  else{  runStart(); 
   }
 }
 
@@ -181,4 +181,10 @@ void runCombo() {
 }
 
 void runHouseParty() {
+  background(173, 130, 95);
+  friends = new Orb[10];
+  
+  for (int i = 0; i < friends.length; i++){
+    friends[i] = new Orb(random(100,700), random(100,700), random(30,50));
+    
 }

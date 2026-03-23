@@ -8,6 +8,7 @@ class Orb
   float bsize;
   float mass;
   color c;
+  int[] ranking;
 
   Orb()
   {
@@ -30,6 +31,19 @@ class Orb
     velocity = new PVector();
     acceleration = new PVector();
     setColor(255,255,255);
+  }
+  
+   Orb(float x, float y, float s)
+  {
+    bsize = s;
+    mass = 5;
+    center = new PVector(x, y);
+    velocity = new PVector();
+    acceleration = new PVector();
+    setColor(random(84, 255), random(50, 170), random(30,50));
+    ranking = new int[10];
+    //for (int i = 0; i < ranking.length; i++){
+    //  int[] list = new int[ <- need to figure out how to generate a list of numbers from 1 to 10 randomly w no repeats
   }
 
   void move(boolean bounce)

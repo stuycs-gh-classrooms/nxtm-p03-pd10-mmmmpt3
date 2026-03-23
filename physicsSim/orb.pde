@@ -8,7 +8,7 @@ class Orb
   float bsize;
   float mass;
   color c;
-  int[] ranking;
+  ArrayList<Integer> ranking;
 
   Orb()
   {
@@ -40,11 +40,21 @@ class Orb
     center = new PVector(x, y);
     velocity = new PVector();
     acceleration = new PVector();
-    setColor(random(84, 255), random(50, 170), random(30,50));
-    ranking = new int[10];
-    //for (int i = 0; i < ranking.length; i++){
-    //  int[] list = new int[ <- need to figure out how to generate a list of numbers from 1 to 10 randomly w no repeats
-  }
+    setColor(int(random(84, 255)), int(random(50, 170)), int(random(30,50)));
+    ArrayList<Integer> ranking = new ArrayList<Integer>();
+    ArrayList<Integer> random10s = new ArrayList<Integer>();
+    for (int i = 0; i < random10s.size(); i++){
+      random10s.add(i, i);
+    }
+    for (int i = 0; i < ranking.size(); i++){
+      int randomIndex = int(random(0,10));
+      ranking.add(i, random10s.get(randomIndex));
+      random10s.remove(randomIndex);
+    }
+      
+      
+    }
+  
 
   void move(boolean bounce)
   {
@@ -77,7 +87,15 @@ class Orb
     return dragForce;
   }
 
-
+  PVector getPOF(Orb other, float G){
+    float strength = G * mass*other.mass;
+    float r = max(center.dist(other.center), MIN_SIZE);
+    strength = strength/ pow(r, 2);
+    PVector force = other.center.copy();
+    force.sub(center);
+    force.mult(strength);
+    return force;
+  }
  
   PVector getGravity(Orb other, float G)
   {

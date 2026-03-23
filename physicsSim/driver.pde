@@ -30,11 +30,10 @@ void setup() {
     toggles[i] = false;
   }
   runStart();
- 
 }
 
-void GravitySetup(){
-   background(0);
+void GravitySetup() {
+  background(0);
   sun = new FixedOrb(width/2, height/2, 35, 200, 255, 171, 0);//mass of sun == 200
 
   planets = new Orb[8];
@@ -55,14 +54,14 @@ void GravitySetup(){
   planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);   // Neptune
   planets[7].setColor(72, 61, 139);
   for (int i = 0; i < planets.length; i++) { //this i am so confused abt we need to fix this tomorrow
-       float r = planets[i].center.dist(sun.center);
+    float r = planets[i].center.dist(sun.center);
     float v = sqrt(G_CONSTANT * sun.mass / r);
     planets[i].velocity = new PVector(-v, 0);
     // perpendicular velocity
   }
 }
 
-void SpringArraySetup(){
+void SpringArraySetup() {
   background(255);
   int orbCount = NUM_ORBS;
   springs = new Orb[orbCount];
@@ -71,8 +70,8 @@ void SpringArraySetup(){
     int y= int(random(0, height));
 
     springs[i] = new Orb( x, y, int(random(MIN_SIZE, MAX_SIZE)), random( MIN_MASS, MAX_MASS));
-    springs[i].setColor(int(random(0,256)),int(random(0,256)), int(random(0,256)));
-}
+    springs[i].setColor(int(random(0, 256)), int(random(0, 256)), int(random(0, 256)));
+  }
 }
 
 
@@ -103,13 +102,13 @@ void runStart() {
 void keyPressed() {
   if (key == '1') {
     toggles[2] = !toggles[2];
-    if(toggles[GRAV]){
+    if (toggles[GRAV]) {
       GravitySetup(); //its better to seperate setup from the different runs
     }
   }
   if (key == '2') {
     toggles[3] = !toggles[3];
-    if(toggles[SPRING]){
+    if (toggles[SPRING]) {
       SpringArraySetup();
     }
   }
@@ -121,56 +120,55 @@ void keyPressed() {
   }
   if (key == '5') {
     toggles[6] = !toggles[6];
+    if (toggles[HOUSEPARTY]) {
+      runHouseParty();
+    }
   }
   if (key == ' ') {
     toggles[0] = !toggles[0];
   }
-  
 }
 
 void runGravity() {
   background(0); // planets move
-    sun.display();
-for (int i = 0; i < planets.length; i++) {
+  sun.display();
+  for (int i = 0; i < planets.length; i++) {
     if (toggles[0]) {
       planets[i].move(false);
     }
-      
-      PVector force = planets[i].getGravity(sun, G_CONSTANT);
-       planets[i].applyForce(force);
-       planets[i].display();
-       
-}
+
+    PVector force = planets[i].getGravity(sun, G_CONSTANT);
+    planets[i].applyForce(force);
+    planets[i].display();
+  }
 }
 
-void runSpring(){ //code copied over from lab
+void runSpring() { //code copied over from lab
   background(255);
-  for(int o = 0; o < springs.length ; o++){ 
+  for (int o = 0; o < springs.length; o++) {
     springs[o].display();
-  if (toggles[0]) {
+    if (toggles[0]) {
       springs[o].move(false);
     }
-    if( o > 0){  // cannot check the first  bc there is no orb to attach to it
-    PVector SpringForce = springs[o].getSpring(springs[o-1], SPRING_LENGTH,SPRING_K); 
-    springs[o].applyForce(SpringForce);
+    if ( o > 0) {  // cannot check the first  bc there is no orb to attach to it
+      PVector SpringForce = springs[o].getSpring(springs[o-1], SPRING_LENGTH, SPRING_K);
+      springs[o].applyForce(SpringForce);
       drawSpring(springs[o-1], springs[o]);
- 
-  }}
+    }
+  }
 }
 
 void drawSpring(Orb o0, Orb o1)
 {
   float distance = o0.center.dist(o1.center); // length of spring
-  if(distance == SPRING_LENGTH){
-    stroke(0,0,0);
+  if (distance == SPRING_LENGTH) {
+    stroke(0, 0, 0);
+  } else if ( distance > SPRING_LENGTH) { //stretched
+    stroke(255, 0, 0);
+  } else { // compressed
+    stroke(0, 255, 0);
   }
-  else if( distance > SPRING_LENGTH){ //stretched
-  stroke(255,0,0);
-  }
-  else{ // compressed
-    stroke(0,255,0);
-  }
-  line(o0.center.x,o0.center.y, o1.center.x , o1.center.y); // draw the line
+  line(o0.center.x, o0.center.y, o1.center.x, o1.center.y); // draw the line
 }
 
 
@@ -183,8 +181,12 @@ void runCombo() {
 void runHouseParty() {
   background(173, 130, 95);
   friends = new Orb[10];
+
+  for (int i = 0; i < friends.length; i++) {
+    friends[i] = new Orb(random(100, 700), random(100, 700), random(30, 50));
+    friends[i].display();
+  }
   
-  for (int i = 0; i < friends.length; i++){
-    friends[i] = new Orb(random(100,700), random(100,700), random(30,50));
-    
+  
+  
 }

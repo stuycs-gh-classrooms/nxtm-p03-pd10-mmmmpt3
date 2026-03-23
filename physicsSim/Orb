@@ -9,15 +9,6 @@ class Orb
   float mass;
   color c;
 
-
-
-  /**
-   * This constructor creates an instance of the orb class with a random size, mass, and position.
-   It initializes the orb's velocity and acceleration, but does not give these PVectors a value. The orb starts stationary.
-   
-   * @author github?
-   * @returns constructs an instance of the orb class
-   */
   Orb()
   {
     bsize = random(10, MAX_SIZE);
@@ -27,17 +18,10 @@ class Orb
     mass = random(10, 100);
     velocity = new PVector();
     acceleration = new PVector();
-    setColor();
+    setColor(255,255,255);
   }
 
 
-  /**
-   This constructor creates an instance of the orb class with a size, mass, and center based on the parameters provided.
-   It initializes the orb's velocity and acceleration and gives it a value based on the parameters provided when the function is called.
-   
-   * @author github?
-   * @returns constructs an instance of the orb class w/ specified parameters
-   */
   Orb(float x, float y, float s, float m)
   {
     bsize = s;
@@ -45,17 +29,9 @@ class Orb
     center = new PVector(x, y);
     velocity = new PVector();
     acceleration = new PVector();
-    setColor();
+    setColor(255,255,255);
   }
 
-
-  /**
-   * This method first checks if the boolean Bounce is true or false. if its true, then it calls x bounce and y bounce.
-   After, the method accelerates the object, then adds to new velocity to the displacement, and resets the acceleration to zero.
-   *
-   * @author github? coach?
-   * @returns new position for orb object, new current velocity and acceleration
-   */
   void move(boolean bounce)
   {
     if (bounce) {
@@ -69,16 +45,6 @@ class Orb
   }//move
 
 
-  /**
-   applyForce(force)
-   * this method overall applies a force to an orb by modifying the vector for the acceleration of that orb class
-   * it creates a copy of the force parameter as to not modify it. Then, it uses the F = ma equation:
-   1. you know force and mass, so you rewrite the equation: F/m = a. The method then solves for a, which is scaleForce
-   2. Once scaleForce is found, it is added to acceleration of the orb (x, y components are added)
-   
-   * @author github? coach?
-   * @returns new acceleration force on orb object
-   */
   void applyForce(PVector force)
   {
     PVector scaleForce = force.copy();
@@ -87,15 +53,6 @@ class Orb
   }
 
 
-  /**
-   getDragForce(cd)
-   * This method uses the drag force equation:
-   drag_magnitude = (1/2) * coefficient_of_drag * (magnitude_of_velocity)^2
-   to calculate the drag force on an object given its coefficient of drag, which is different depending on the elements of the object
-   *  after using the equation above to find the drag magnitude, it normalizes the velocity (sets magnitude = 1) of the Orb object and multiplies it by the magnitude of drag
-   * @author github? coach?
-   * @returns dragForce value
-   */
   PVector getDragForce(float cd)
   {
     float dragMag = velocity.mag();
@@ -107,14 +64,7 @@ class Orb
   }
 
 
-  /**
-   * This method uses the gravitational force equation:
-   Fg = g (m1*m2)/r^2
-   to calculatre the gravitational acceleration betweem two orb objects
-   
-   * @author github? coach?
-   * @returns gravity PVector
-   */
+ 
   PVector getGravity(Orb other, float G)
   {
     float strength = G * mass*other.mass;
@@ -127,23 +77,6 @@ class Orb
     return force;
   }
 
-  /**
-   getSpring()
-   
-   This should calculate the force felt on the calling object by
-   a spring between the calling object and other.
-   
-   The resulting force should pull the calling object towards
-   other if the spring is extended past springLength and should
-   push the calling object away from o if the spring is compressed
-   to be less than springLength.
-   
-   F = kx (ABhat)
-   k: Spring constant
-   x: displacement, the difference of the distance
-   between A and B and the length of the spring.
-   (ABhat): The normalized vector from A to B
-   */
   PVector getSpring(Orb other, int springLength, float springK)
   {
     PVector direction = PVector.sub(other.center, this.center);
@@ -154,14 +87,6 @@ class Orb
     return direction;
   }//getSpring
 
-
-  /**
-   yBounce()
-   
-   checks if the Orb is at the top or bottom of the screen. if yes, it negates the up/down of motion of the Orb.
-   @author github? coach?
-   * @returns boolean
-   */
   boolean yBounce()
   {
     if (center.y > height - bsize/2) {
@@ -178,13 +103,6 @@ class Orb
     return false;
   }//yBounce
 
-
-  /**
-   xBounce()
-   checks if the Orb is at the left or right of the screen. if yes, it negates the right/leftop[ of motion of the Orb.
-   @author github? coach?
-   * @returns boolean
-   */
   boolean xBounce()
   {
     if (center.x > width - bsize/2) {
@@ -199,14 +117,6 @@ class Orb
     return false;
   }//xbounce
 
-
-  /**
-   collisionCheck(other)
-   
-   checks if this orb is within the bounds of any other orb
-   @author github? coach?
-   * @returns boolean
-   */
   boolean collisionCheck(Orb other)
   {
     return ( this.center.dist(other.center)
@@ -214,22 +124,9 @@ class Orb
   }//collisionCheck
 
 
-  /**
-   setColor()
-   
-   sets the color of all orb instances
-   1. starts by setting "bounds" for the color range (c0 is cyan, c1 is black)
-   2. chooses rgb colors incrementally in the color range, depending on how many orbs there are in the system!
-   */
-  void setColor()
+  void setColor(int r, int g, int b)
   {
-    color c0 = color(0, 255, 255);
-    color c1 = color(0);
-    /*
-    YOUR CONCISE EXPLANATION IN COLLOQUIAL ENGLISH
-     OF WHAT THIS PROCESSING BUILT-IN DOES...
-     */
-    c = lerpColor(c0, c1, (mass-MIN_SIZE)/(MAX_MASS-MIN_SIZE));
+    c = color(r, g, b);
   }//setColor
 
 

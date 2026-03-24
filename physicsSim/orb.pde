@@ -107,19 +107,19 @@ class Orb {
     strength = strength / pow(r, 2);
 
     PVector force = other.center.copy();
-    force.sub(center);
-    force.normalize(); // IMPORTANT FIX
+    force.sub(center); 
     force.mult(strength);
 
-    // friendship scaling
+    //friendship scaling
     int index = other.ranking.indexOf(id);
     float friendship = map(index, 0, 9, -1, 1);
-
+    force.normalize();
     force.mult(friendship);
 
-    // tone down chaos
-    force.mult(0.05);
-
+    //tone down chaos
+    force.mult(0.01);
+    
+    force.limit(30);
     return force;
   }
 

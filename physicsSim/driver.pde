@@ -187,8 +187,9 @@ void runSpring() {
   for (int i = 0; i < springs.length; i++) {
     springs[i].display();
 
-    if (toggles[MOVING]) springs[i].move(false);
-
+    if (toggles[MOVING]) {
+      springs[i].move(toggles[BOUNCE]);
+    }
     if (i > 0) {
       PVector f = springs[i].getSpring(springs[i-1], SPRING_LENGTH, SPRING_K);
       springs[i].applyForce(f);
@@ -211,7 +212,7 @@ void runWindTunnel() {
       test.applyForce(push);
       test.applyForce(test.getDragForce(D_COEF));
       test.move(false);
-      test.dragForceBounce();
+      //test.dragForceBounce();
     }
   }
 }

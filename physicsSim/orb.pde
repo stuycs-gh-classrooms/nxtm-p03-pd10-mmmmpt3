@@ -11,9 +11,7 @@ class Orb {
   int id; // used for house party system
   ArrayList<Integer> ranking;
 
-  ////////////////////////////////////////////////////////////
   // CONSTRUCTORS
-  ////////////////////////////////////////////////////////////
 
   Orb() {
     bsize = random(10, MAX_SIZE);
@@ -69,9 +67,7 @@ class Orb {
     }
   }
 
-  ////////////////////////////////////////////////////////////
   // PHYSICS
-  ////////////////////////////////////////////////////////////
 
   void move(boolean bounce) {
     if (bounce) {
@@ -90,9 +86,7 @@ class Orb {
     acceleration.add(f);
   }
 
-  ////////////////////////////////////////////////////////////
   // FORCES
-  ////////////////////////////////////////////////////////////
 
   PVector getDragForce(float cd) {
     float dragMag = velocity.mag();
@@ -105,7 +99,7 @@ class Orb {
     return drag;
   }
 
-  // POWER OF FRIENDSHIP 💀
+  // POWER OF FRIENDSHIP
   PVector getPOF(Orb other, float G) {
 
     float strength = G * mass * other.mass;
@@ -153,9 +147,8 @@ class Orb {
     return dir;
   }
 
-  ////////////////////////////////////////////////////////////
+
   // COLLISION / BOUNDARY
-  ////////////////////////////////////////////////////////////
 
   boolean yBounce() {
     if (center.y > height - bsize/2) {
@@ -189,9 +182,7 @@ class Orb {
     return center.dist(other.center) <= (bsize/2 + other.bsize/2);
   }
 
-  ////////////////////////////////////////////////////////////
   // VISUAL
-  ////////////////////////////////////////////////////////////
 
   void setColor(int r, int g, int b) {
     c = color(r, g, b);

@@ -88,7 +88,7 @@ void SpringArraySetup() {
 void windTunnelSetup() {
   wind = new PVector(0.1, 0);
   gravity = new PVector(0, 0.1);
-  push = new PVector(2, -2);
+  
 }
 
 
@@ -209,7 +209,6 @@ void runWindTunnel() {
     if (toggles[MOVING]) {
       test.applyForce(gravity);
       test.applyForce(wind);
-      test.applyForce(push);
       test.applyForce(test.getDragForce(D_COEF));
       test.move(false);
       //test.dragForceBounce();

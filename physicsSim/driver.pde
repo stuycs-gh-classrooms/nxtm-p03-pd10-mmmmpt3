@@ -5,188 +5,248 @@ int SPRING = 3;
 int WINDTUNNEL = 4;
 int COMBO = 5;
 int HOUSEPARTY = 6;
+
 boolean[] toggles = new boolean[7];
 
+PVector wind;
+PVector gravity;
 
 FixedOrb sun;
 Orb[] planets;
 Orb[] springs;
 Orb[] friends;
+Orb test;
+
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
 int MAX_SIZE = 60;
+
 float MIN_MASS = 10;
 float MAX_MASS = 100;
+
 float G_CONSTANT = 1;
 float D_COEF = 0.1;
 
 int SPRING_LENGTH = 50;
-float  SPRING_K = 0.005;
-
+float SPRING_K = 0.005;
 
 void setup() {
   size(800, 800);
+
   for (int i = 0; i < toggles.length; i++) {
     toggles[i] = false;
   }
+
+  setupHouseParty(); // preload friends
   runStart();
 }
 
+// SETUPS
+
 void GravitySetup() {
   background(0);
-  sun = new FixedOrb(width/2, height/2, 35, 200, 255, 171, 0);//mass of sun == 200
+  sun = new FixedOrb(width/2, height/2, 35, 200, 255, 171, 0);
 
   planets = new Orb[8];
-  planets[0] = new Orb(width/2 + 30, height/2, 6, 0.000034); //Mercury
-  planets[0].setColor(169, 169, 169);
-  planets[1] = new Orb(width/2 + 50, height/2, 10, 0.00048); // Venus
-  planets[1].setColor(255, 223, 196);
-  planets[2] = new Orb(width/2 + 70, height/2, 12, 0.0006);   // Earth
-  planets[2].setColor(100, 149, 237);
-  planets[3] = new Orb(width/2 + 90, height/2, 10, 0.000064); // Mars
-  planets[3].setColor(188, 39, 50);
-  planets[4] = new Orb(width/2 + 130, height/2, 30, 0.19);    // Jupiter
-  planets[4].setColor(210, 180, 140);
-  planets[5] = new Orb(width/2 + 170, height/2, 24, 0.056);    // Saturn
-  planets[5].setColor(218, 165, 32);
-  planets[6] = new Orb(width/2 + 210, height/2, 16, 0.0088);   // Uranus
-  planets[6].setColor(175, 238, 238);
-  planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);   // Neptune
-  planets[7].setColor(72, 61, 139);
-  for (int i = 0; i < planets.length; i++) { //this i am so confused abt we need to fix this tomorrow
+
+  planets[0] = new Orb(width/2 + 30, height/2, 6, 0.000034);
+  planets[1] = new Orb(width/2 + 50, height/2, 10, 0.00048);
+  planets[2] = new Orb(width/2 + 70, height/2, 12, 0.0006);
+  planets[3] = new Orb(width/2 + 90, height/2, 10, 0.000064);
+  planets[4] = new Orb(width/2 + 130, height/2, 30, 0.19);
+  planets[5] = new Orb(width/2 + 170, height/2, 24, 0.056);
+  planets[6] = new Orb(width/2 + 210, height/2, 16, 0.0088);
+  planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);
+
+  for (int i = 0; i < planets.length; i++) {
     float r = planets[i].center.dist(sun.center);
     float v = sqrt(G_CONSTANT * sun.mass / r);
     planets[i].velocity = new PVector(-v, 0);
-    // perpendicular velocity
   }
 }
 
 void SpringArraySetup() {
   background(255);
-  int orbCount = NUM_ORBS;
-  springs = new Orb[orbCount];
-  for (int i = 0; i < springs.length; i++) {
-    int x = int(random(0, width));
-    int y= int(random(0, height));
+  springs = new Orb[NUM_ORBS];
 
-    springs[i] = new Orb( x, y, int(random(MIN_SIZE, MAX_SIZE)), random( MIN_MASS, MAX_MASS));
-    springs[i].setColor(int(random(0, 256)), int(random(0, 256)), int(random(0, 256)));
+  for (int i = 0; i < springs.length; i++) {
+    springs[i] = new Orb(
+      random(width),
+      random(height),
+      int(random(MIN_SIZE, MAX_SIZE)),
+      random(MIN_MASS, MAX_MASS)
+    );
+    springs[i].setColor(
+      int(random(256)),
+      int(random(256)),
+      int(random(256))
+    );
   }
 }
 
+void windTunnelSetup() {
+  wind = new PVector(0.1, 0);
+  gravity = new PVector(0, 0.1);
+}
+
+void setupHouseParty() {
+  friends = new Orb[10];
+  for (int i = 0; i < friends.length; i++) {
+    friends[i] = new Orb(random(100, 700), random(100, 700), random(30, 50));
+  }
+}
+
+// DRAW LOOP
 
 void draw() {
-  if (toggles[GRAV]) { // clear way of organzing the diff toggles
-    runGravity();
-  }
-  if (toggles[SPRING]) {
-    runSpring();
-  }
+  if (toggles[GRAV]) runGravity();
+  if (toggles[SPRING]) runSpring();
+  if (toggles[WINDTUNNEL]) runWindTunnel();
+  if (toggles[HOUSEPARTY]) runHouseParty();
 }
 
-void runStart() {
-  background(184, 211, 255);
-  textSize(50);
-  text("A Variety of Physics Simulations", 70, 80);
-  textSize(30);
-  text("Controls:", 150, 150);
-  text("Press 1 for Simulation 1, Gravity", 150, 200);
-  text("Press 2 for Simulation 2, Spring", 150, 250);
-  text("Press 3 for Simulation 3, Drag", 150, 300);
-  text("Press 4 for Simulation 4, Combination", 150, 350);
-  text("Press 5 for the House Party Simulation", 150, 400);
-  text("Press Space to toggle movement on/off", 150, 450);
-  text("Press B to toggle bounce on/off", 150, 500);
-}
+// KEY CONTROLS
 
 void keyPressed() {
+
   if (key == '1') {
-    toggles[2] = !toggles[2];
-    if (toggles[GRAV]) {
-      GravitySetup(); //its better to seperate setup from the different runs
-    }
+    toggles[GRAV] = !toggles[GRAV];
+    if (toggles[GRAV]) GravitySetup();
   }
+
   if (key == '2') {
-    toggles[3] = !toggles[3];
-    if (toggles[SPRING]) {
-      SpringArraySetup();
-    }
+    toggles[SPRING] = !toggles[SPRING];
+    if (toggles[SPRING]) SpringArraySetup();
   }
+
   if (key == '3') {
-    toggles[4] = !toggles[4];
+    toggles[WINDTUNNEL] = !toggles[WINDTUNNEL];
+    if (toggles[WINDTUNNEL]) windTunnelSetup();
   }
-  if (key == '4') {
-    toggles[5] = !toggles[5];
-  }
+
   if (key == '5') {
-    toggles[6] = !toggles[6];
-    if (toggles[HOUSEPARTY]) {
-      runHouseParty();
-    }
+    toggles[HOUSEPARTY] = !toggles[HOUSEPARTY];
   }
+
   if (key == ' ') {
-    toggles[0] = !toggles[0];
+    toggles[MOVING] = !toggles[MOVING];
+  }
+
+  if (key == 'b' || key == 'B') {
+    toggles[BOUNCE] = !toggles[BOUNCE];
+  }
+
+  //wind tunnel shapes
+  if (toggles[WINDTUNNEL]) {
+    if (key == 'o') {
+      test = new Orb(400, 390, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = .5;
+    }
+    else if (key == 'd') {
+      test = new teardrop(400, 390, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = .045;
+    }
+    else if (key == 'r') {
+      test = new rectangle(400, 390, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = .295;
+    }
+    else if (key == 't') {
+      test = new triangle(400, 390, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = 1.14;
+    }
   }
 }
+
+// SIMULATIONS
 
 void runGravity() {
-  background(0); // planets move
+  background(0);
   sun.display();
-  for (int i = 0; i < planets.length; i++) {
-    if (toggles[0]) {
-      planets[i].move(false);
-    }
 
-    PVector force = planets[i].getGravity(sun, G_CONSTANT);
-    planets[i].applyForce(force);
-    planets[i].display();
+  for (Orb p : planets) {
+    if (toggles[MOVING]) p.move(false);
+
+    PVector force = p.getGravity(sun, G_CONSTANT);
+    p.applyForce(force);
+    p.display();
   }
 }
 
-void runSpring() { //code copied over from lab
+void runSpring() {
   background(255);
-  for (int o = 0; o < springs.length; o++) {
-    springs[o].display();
-    if (toggles[0]) {
-      springs[o].move(false);
-    }
-    if ( o > 0) {  // cannot check the first  bc there is no orb to attach to it
-      PVector SpringForce = springs[o].getSpring(springs[o-1], SPRING_LENGTH, SPRING_K);
-      springs[o].applyForce(SpringForce);
-      drawSpring(springs[o-1], springs[o]);
+
+  for (int i = 0; i < springs.length; i++) {
+    springs[i].display();
+
+    if (toggles[MOVING]) springs[i].move(false);
+
+    if (i > 0) {
+      PVector f = springs[i].getSpring(springs[i-1], SPRING_LENGTH, SPRING_K);
+      springs[i].applyForce(f);
+      drawSpring(springs[i-1], springs[i]);
     }
   }
 }
 
-void drawSpring(Orb o0, Orb o1)
-{
-  float distance = o0.center.dist(o1.center); // length of spring
-  if (distance == SPRING_LENGTH) {
-    stroke(0, 0, 0);
-  } else if ( distance > SPRING_LENGTH) { //stretched
-    stroke(255, 0, 0);
-  } else { // compressed
-    stroke(0, 255, 0);
+void runWindTunnel() {
+  background(97);
+  fill(200);
+  rect(20, 100, width - 40, 500);
+
+  if (test != null) {
+    test.display();
+
+    if (toggles[MOVING]) {
+      test.applyForce(gravity);
+      test.applyForce(wind);
+      test.applyForce(test.getDragForce(D_COEF));
+      test.move(false);
+    }
   }
-  line(o0.center.x, o0.center.y, o1.center.x, o1.center.y); // draw the line
-}
-
-
-void runDrag() {
-}
-
-void runCombo() {
 }
 
 void runHouseParty() {
   background(173, 130, 95);
-  friends = new Orb[10];
 
   for (int i = 0; i < friends.length; i++) {
-    friends[i] = new Orb(random(100, 700), random(100, 700), random(30, 50));
+
+    for (int j = 0; j < friends.length; j++) {
+      if (i != j) {
+        PVector f = friends[i].getPOF(friends[j], G_CONSTANT);
+        friends[i].applyForce(f);
+      }
+    }
+
+    if (toggles[MOVING]) {
+      friends[i].move(toggles[BOUNCE]);
+    }
+
     friends[i].display();
   }
-  
-  
-  
+}
+
+// HELPERS
+
+void drawSpring(Orb o0, Orb o1) {
+  float d = o0.center.dist(o1.center);
+
+  if (d == SPRING_LENGTH) stroke(0);
+  else if (d > SPRING_LENGTH) stroke(255, 0, 0);
+  else stroke(0, 255, 0);
+
+  line(o0.center.x, o0.center.y, o1.center.x, o1.center.y);
+}
+
+void runStart() {
+  background(184, 211, 255);
+  textSize(40);
+  text("Physics Simulations", 150, 80);
+
+  textSize(20);
+  text("1: Gravity", 200, 150);
+  text("2: Spring", 200, 180);
+  text("3: Wind Tunnel", 200, 210);
+  text("5: House Party", 200, 240);
+  text("Space: Move", 200, 270);
+  text("B: Bounce", 200, 300);
 }

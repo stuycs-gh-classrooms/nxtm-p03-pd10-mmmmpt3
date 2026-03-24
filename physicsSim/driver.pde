@@ -10,6 +10,7 @@ boolean[] toggles = new boolean[7];
 
 PVector wind;
 PVector gravity;
+PVector push;
 
 FixedOrb sun;
 Orb[] planets;
@@ -87,7 +88,9 @@ void SpringArraySetup() {
 void windTunnelSetup() {
   wind = new PVector(0.1, 0);
   gravity = new PVector(0, 0.1);
+  push = new PVector(2, -2);
 }
+
 
 void setupHouseParty() {
   friends = new Orb[10];
@@ -154,8 +157,14 @@ void keyPressed() {
       test = new triangle(400, 390, 100, random(MIN_MASS, MAX_MASS));
       D_COEF = 1.14;
     }
+    if(key == 'b' || key == 'B') { // need rto make a new bounce function just for windtunnel
+    test.move(true);  
+  }
+
   }
 }
+
+
 
 // SIMULATIONS
 
@@ -199,8 +208,10 @@ void runWindTunnel() {
     if (toggles[MOVING]) {
       test.applyForce(gravity);
       test.applyForce(wind);
+      test.applyForce(push);
       test.applyForce(test.getDragForce(D_COEF));
       test.move(false);
+      test.dragForceBounce();
     }
   }
 }
@@ -239,14 +250,20 @@ void drawSpring(Orb o0, Orb o1) {
 
 void runStart() {
   background(184, 211, 255);
-  textSize(40);
-  text("Physics Simulations", 150, 80);
+  textSize(90);
+  text("Physics Simulations", 30, 80);
 
-  textSize(20);
-  text("1: Gravity", 200, 150);
-  text("2: Spring", 200, 180);
-  text("3: Wind Tunnel", 200, 210);
-  text("5: House Party", 200, 240);
-  text("Space: Move", 200, 270);
-  text("B: Bounce", 200, 300);
+  textSize(50);
+  text("1: Gravity", 350, 160);
+  square(230, 120, 100);
+  text("2: Spring", 350, 260);
+  square(230, 220, 100);
+  text("3: Wind Tunnel", 350, 360);
+  square(230, 320, 100);
+  text("4: Combination", 350, 460);
+  square(230, 420, 100);
+  text("5: House Party", 350, 560);
+  square(230, 520, 100);
+  text("Space: Move", 200, 710);
+  text("B: Bounce", 200, 770);
 }

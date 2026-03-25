@@ -32,14 +32,10 @@ All projects will require the following:
 ### Custom Force Formula
 What is the formula for your force? Including descriptions/definitions for the symbols. (You may include a picture of the formula if it is not easily typed.)
 
-<<<<<<< HEAD
-
-=======
 Power of Friendship (POF) force:
 
 equation:
 Fpof = k * (p1p2/r^2) - C
->>>>>>> 740eee853013b462b6c69ea23e6784a1c2711c0b
 
 ### Custom Force Breakdown
 - What information that is already present in the `Orb` or `OrbNode` classes does this force use?
@@ -57,71 +53,55 @@ Fpof = k * (p1p2/r^2) - C
   each orb experiences a force due to every other orb in the system. the behavior of each orb is determined by its neighbors. 
 
 - In order to calculate this force, do you need to perform extra intermediary calculations? If so, what?
- distance between two forces: distance formula
-ranking lookup, determine the position of one Orb in another Orb’s ranked list
-conflict calculation
-final force computation
+  distance between two forces: distance formula
+  ranking lookup, determine the position of one Orb in another Orb’s ranked list
+  conflict calculation
+  final force computation
 --- 
 
 ### Simulation 1: Gravity
 Describe how you will attempt to simulate orbital motion.
 
-<<<<<<< HEAD
 An object in orbit has velocity in a linear direction, but its acceleration vector is perpendicular to its velocity vector, and towards the COM (whatever the smaller object is orbiting around) <-- centripedal motion!
 To simulate this:
 - one fixed orb, smaller, less mass orb w an initial velocity.
 - use the gravitational attraction equation to apply an acceleration on the smaller orb towards the fixed orb.
-=======
 by using centripedal acceleration (giving every orb velocity but then an acceleration vector perpendicular to it) and putting a fixed, very massive orb in the center.
 
->>>>>>> 740eee853013b462b6c69ea23e6784a1c2711c0b
 --- 
 
 ### Simulation 2: Spring
 Describe what your spring simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-<<<<<<< HEAD
-Similar to lab, using f = kx
-- simulate longitudual waves also?
-=======
 similar to lab, multiple orbs connected by springs in a chain or network structure. while running, strings will apply force based on how much they are stretched or compressed relative to their length. The system should oscillate.
->>>>>>> 740eee853013b462b6c69ea23e6784a1c2711c0b
 
 --- 
 
 ### Simulation 3: Drag
 Describe what your drag simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-<<<<<<< HEAD
 wind tunnel simulation!
 orb/teardrop/rectangle/fighter jet looking thing <-- choose which one you want
 you can toggle whether or not drag is activated, and you can see its speed change!
-=======
+
 The drag simulation will contain elements from both the lab and w58_orb. The idea discussed during class was to make a "wind tunnel" in order to have visual indications that  can clearly show drag force being implemented. Another option is to have a similar setup to w58 with having the lowr half be the fluid that once teh orbs reach the drag force is implemented. Of course with DragForce, gravity must be present for anything to "actually" happen. While running the orbs, must slow down as the force "pushes" in the direction opposite the velocity of the orbs.
->>>>>>> 740eee853013b462b6c69ea23e6784a1c2711c0b
 
 --- 
 
 ### Simulation 4: Custom force
 Describe what your Custom force simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-<<<<<<< HEAD
 the POWER OF FRIENDSHIP!
 
 - each orb has a certain material
 - orbs of the same material have more of an attraction to each other. 
 
-=======
-The custom force simulation would include all the orbs lined up in a row. There will be toggles to turn both moving ON and custom force ON. As described above, while running, the orbs will visually be experincing a force from its neighbors as there is a conflic level between two orbs meaning we have to account for all possible pairs of orbs.   
->>>>>>> 740eee853013b462b6c69ea23e6784a1c2711c0b
+The custom force simulation would include all the orbs lined up in a row. There will be toggles to turn both moving ON and custom force ON. As described above, while running, the orbs will visually be experincing a force from its neighbors as there is a conflict level between two orbs meaning we have to account for all possible pairs of orbs.   
 
 --- 
 
 ### Simulation 5: Combination
 Describe what your combination simulation will look like. Explain how it will be setup, and how it should behave while running.
 
-<<<<<<< HEAD
-=======
 A combination would be gravity, spring force, and our custom force. Set up would either be the same as the lab where there is a fixed object present where the gravity is accounted from or have the orbs be randomly faced with toggles to turn ON each force. The behavor of this simulation isnt clear yet as our custom force hasnt been planned out clearly yet. Though, a possibility is that it might behave in a similar manner of when you Toggle ON gravity and spring just that the orbs will interact with each other. 
->>>>>>> 740eee853013b462b6c69ea23e6784a1c2711c0b
 

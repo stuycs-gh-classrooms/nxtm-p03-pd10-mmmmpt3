@@ -5,6 +5,7 @@ int SPRING = 3;
 int WINDTUNNEL = 4;
 int COMBO = 5;
 int HOUSEPARTY = 6;
+float timeScale = 1.0;
 
 boolean[] toggles = new boolean[7];
 
@@ -69,10 +70,18 @@ void GravitySetup() {
   planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);
   planets[7].setColor(124, 183, 187);
 
+
+  // to orbit something, an object's velocity must be perpendicular to the radius between the sun and the planet
+  // this calculates the tangent line every time and uses it as the object's perpendicular velocity.
   for (int i = 0; i < planets.length; i++) {
     float r = planets[i].center.dist(sun.center);
     float v = sqrt(G_CONSTANT * sun.mass / r);
-    planets[i].velocity = new PVector(-v, 0);
+    PVector radius = PVector.sub(planets[i].center, sun.center);
+    PVector tangent = new PVector(-radius.y, radius.x);
+    tangent.normalize();
+    tangent.mult(v);
+
+    planets[i].velocity = tangent;
   }
   for ( int i =0; i < stars.length; i ++) {
 
@@ -111,16 +120,29 @@ void setupHouseParty() {
   friends = new Orb[10];
   for (int i = 0; i < friends.length; i++) {
     friends[i] = new Orb(random(100, 700), random(100, 700), random(30, 50));
+    friends[i].velocity = new PVector(random(-2, 2), random(-2, 2));
   }
 }
 
 // DRAW LOOP
 
 void draw() {
-  if (toggles[GRAV]) runGravity();
-  if (toggles[SPRING]) runSpring();
-  if (toggles[WINDTUNNEL]) runWindTunnel();
-  if (toggles[HOUSEPARTY]) runHouseParty();
+  if (toggles[GRAV]) {
+    runGravity();
+  }
+  if (toggles[SPRING]) {
+    runSpring();
+  }
+  if (toggles[WINDTUNNEL]) {
+    runWindTunnel();
+  }
+  if (toggles[HOUSEPARTY]) {
+    runHouseParty();
+  }
+  if (toggles[COMBO]) {
+    runCombo();
+  }
+  drawBoxes();
 }
 
 // KEY CONTROLS
@@ -146,15 +168,21 @@ void keyPressed() {
     print(SPRING_K);
   }
 
-
-
   if (key == '3') {
     toggles[WINDTUNNEL] = !toggles[WINDTUNNEL];
     if (toggles[WINDTUNNEL]) windTunnelSetup();
   }
 
+  if (key == '4') {
+    toggles[COMBO] = !toggles[COMBO];
+    if (toggles[COMBO]) comboSetup();
+  }
+
   if (key == '5') {
     toggles[HOUSEPARTY] = !toggles[HOUSEPARTY];
+    if (toggles[HOUSEPARTY]) {
+      toggles[MOVING] = true;
+    }
   }
 
   if (key == ' ') {
@@ -164,10 +192,16 @@ void keyPressed() {
   if (key == 'b' || key == 'B') {
     toggles[BOUNCE] = !toggles[BOUNCE];
   }
+  if (keyCode == UP && (toggles[GRAV] || toggles[COMBO])) {
+    timeScale *= 1.2;
+  }
+  if (keyCode == DOWN && (toggles[GRAV] || toggles[COMBO])) {
+    timeScale *= 0.8;
+  }
 }
 
 
-void mousePressed(){
+void mousePressed() {
   if (toggles[WINDTUNNEL]) {
     if (mouseX >= 160 && mouseX <= 260 && mouseY >= 690 && mouseY <= 790) {
       test = new Orb(400, 300, 100, random(MIN_MASS, MAX_MASS));
@@ -194,12 +228,15 @@ void mousePressed(){
 
 void runGravity() {
   background(0);
+  textSize(30);
+  text("use up/down arrow keys to move faster/slower", 20, 40);
+  text("CAUTION: you may lose planets", 20, 70);
   sun.display();
   for ( int i =0; i < stars.length; i ++) {
     stars[i].display();
   }
   for (Orb p : planets) {
-    if (toggles[MOVING]) p.move(false);
+    if (toggles[MOVING]) p.move(toggles[BOUNCE]);
 
     PVector force = p.getGravity(sun, G_CONSTANT);
     p.applyForce(force);
@@ -209,12 +246,15 @@ void runGravity() {
 
 void runSpring() {
   background(255);
+  fill(0);
+  textSize(20);
+  text("use +/- keys to change the spring constant, K", 20, 40);
 
   for (int i = 0; i < springs.length; i++) {
     springs[i].display();
 
     if (toggles[MOVING]) {
-      springs[i].move(true);
+      springs[i].move(toggles[BOUNCE]);
     }
     if (i > 0) {
       PVector f = springs[i].getSpring(springs[i-1], SPRING_LENGTH, SPRING_K);
@@ -233,7 +273,7 @@ void runWindTunnel() {
   noStroke();
   fill(200);
   rect(20, 100, width - 40, 500);
-  
+
   fill(200);
   rect(20, 620, 520, 60);
   textSize(50);
@@ -259,9 +299,9 @@ void runWindTunnel() {
   square(440, 690, 100);
   fill(68, 221, 232);
   ellipse(490, 740, 40, 80);
-  
- 
-  
+
+
+
   if (test != null) {
     test.display();
     fill(0);
@@ -277,8 +317,92 @@ void runWindTunnel() {
   }
 }
 
+void comboSetup() {
+  background(0);
+
+  sun = new FixedOrb(width/2, height/2, 35, 200, 255, 171, 0);
+
+  springs = new Orb[NUM_ORBS];
+
+  for (int i = 0; i < springs.length; i++) {
+    float angle = map(i, 0, springs.length, 0, TWO_PI);
+    float r = 150;
+
+    float x = width/2 + r * cos(angle);
+    float y = height/2 + r * sin(angle);
+
+    springs[i] = new Orb(x, y, random(15, 30), random(20, 50));
+
+    springs[i].setColor(
+      int(random(100, 255)),
+      int(random(100, 255)),
+      int(random(100, 255))
+      );
+
+    PVector radius = PVector.sub(springs[i].center, sun.center);
+    PVector tangent = new PVector(-radius.y, radius.x);
+    tangent.normalize();
+
+    float v = 0.7 * sqrt(G_CONSTANT * sun.mass / r);
+    tangent.mult(v);
+
+    springs[i].velocity = tangent;
+  }
+}
+
+void runCombo() {
+  background(0);
+
+  sun.display();
+
+  for (int i = 0; i < springs.length; i++) {
+
+    Orb current = springs[i];
+
+    PVector g = current.getGravity(sun, G_CONSTANT);
+    current.applyForce(g);
+
+
+    Orb next = springs[(i + 1) % springs.length];
+    PVector s = current.getSpring(next, SPRING_LENGTH, SPRING_K);
+    current.applyForce(s);
+
+
+    PVector d = current.getDragForce(D_COEF);
+    current.applyForce(d);
+
+
+    if (toggles[MOVING]) {
+      current.move(toggles[BOUNCE]);
+    }
+
+    current.display();
+
+    //draw spring lines
+    drawSpring(current, next);
+  }
+}
+
 void runHouseParty() {
   background(173, 130, 95);
+
+  float x = width/2 - 40;
+  float y = height - 80;
+
+  // cake base
+  fill(255, 200, 200);
+  rect(x, y, 80, 30);
+
+  // top
+  fill(255, 230, 230);
+  rect(x + 10, y - 20, 60, 20);
+
+  // candle
+  fill(255);
+  rect(width/2 - 2, y - 35, 4, 15);
+
+  fill(255, 200, 0);
+  ellipse(width/2, y - 40, 6, 8);
 
   for (int i = 0; i < friends.length; i++) {
 
@@ -318,39 +442,39 @@ void runStart() {
   text("1: Gravity", 350, 180);
   fill(0);
   square(230, 120, 100);
-  fill(249,215, 28);
+  fill(249, 215, 28);
   circle( 280, 170, 13);
-  
+
   fill(248, 226, 176);
   circle( 290, 170, 8);
-  
+
   fill(0, 0, 160);
   circle( 300, 170, 10);
-  
-   fill(173, 98, 66);
-  circle( 310, 170, 12); 
-  
+
+  fill(173, 98, 66);
+  circle( 310, 170, 12);
+
   fill(209, 167, 127);
-  circle( 318, 170, 10); 
-  
+  circle( 318, 170, 10);
+
   text("2: Spring", 350, 280);
   fill(255);
   square(230, 220, 100);
   fill(209, 34, 56);
   circle(255, 300, 30);
   fill(34, 230, 67);
-  circle(310, 240, 30); 
-  fill(0); 
+  circle(310, 240, 30);
+  fill(0);
   line(245, 300, 310, 240);
-  
+
   text("3: Wind Tunnel", 350, 380);
   fill(200);
   square(230, 320, 100);
-  
+
   fill(201, 45, 97);
   rect(240, 340, 20, 30);
 
-  
+
   fill(255, 255, 255);
   circle(300, 345, 30);
 
@@ -358,10 +482,10 @@ void runStart() {
   fill(255, 205, 0);
   triangle(240, 380, 240, 400, 260, 390);
 
- 
+
   fill(68, 221, 232);
   ellipse(300, 395, 20, 40);
-  
+
   fill(255);
   text("4: Combination", 350, 480);
   square(230, 420, 100);
@@ -370,7 +494,52 @@ void runStart() {
   fill(255);
   text("5: House Party", 350, 580);
   square(230, 520, 100);
-  text( "GENERAL CONTROLS",170, 690);
-  text("Space: Move", 20, 740);
+
+  float cx = 230;
+  float cy = 520;
+  fill(255, 200, 200);
+  rect(cx + 25, cy + 50, 50, 20);
+  fill(255, 230, 230);
+  rect(cx + 35, cy + 35, 30, 15);
+  fill(255);
+  rect(cx + 48, cy + 20, 4, 15);
+  fill(255, 200, 0);
+  ellipse(cx + 50, cy + 18, 6, 8);
+  
+  fill(0);
+  text( "GENERAL CONTROLS", 170, 690);
+  text("Space: Move", 200, 740);
   text("B: Bounce", 520, 740);
+}
+
+void drawBoxes() {
+  int x = 20;
+  int y = height - 80;
+  int w = 140;
+  int h = 25;
+  int spacing = 35;
+
+  textSize(16);
+  fill(255);
+
+  if (toggles[MOVING]) {
+    fill(0, 200, 0);
+  } else {
+    fill(200, 0, 0);
+  }//moving
+  rect(x, y, w, h);
+
+  fill(0);
+  text("MOVE (space)", x + 10, y + 18);
+
+  // BOUNCE toggle
+  if (toggles[BOUNCE]) {
+    fill(0, 200, 0);
+  } else {
+    fill(200, 0, 0);
+  }
+  rect(x, y + spacing, w, h);
+
+  fill(0);
+  text("BOUNCE (B)", x + 10, y + spacing + 18);
 }

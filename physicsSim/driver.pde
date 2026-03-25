@@ -40,12 +40,29 @@ void setup() {
   for (int i = 0; i < toggles.length; i++) {
     toggles[i] = false;
   }
-
-  setupHouseParty(); // preload friends
   runStart();
 }
 
-// SETUPS
+void draw() {
+  if (toggles[GRAV]) {
+    runGravity();
+  }
+  if (toggles[SPRING]) {
+    runSpring();
+  }
+  if (toggles[WINDTUNNEL]) {
+    runWindTunnel();
+  }
+  if (toggles[HOUSEPARTY]) {
+    runHouseParty();
+  }
+  if (toggles[COMBO]) {
+    runCombo();
+  }
+  drawBoxes();
+}
+
+// GRAVITY
 
 void GravitySetup() {
   background(0);
@@ -91,6 +108,26 @@ void GravitySetup() {
   }
 }
 
+void runGravity() {
+  background(0);
+  textSize(30);
+  text("use up/down arrow keys to move faster/slower", 20, 40);
+  text("CAUTION: you may lose planets", 20, 70);
+  sun.display();
+  for ( int i =0; i < stars.length; i ++) {
+    stars[i].display();
+  }
+  for (Orb p : planets) {
+    if (toggles[MOVING]) p.move(toggles[BOUNCE]);
+
+    PVector force = p.getGravity(sun, G_CONSTANT);
+    p.applyForce(force);
+    p.display();
+  }
+}
+
+// SPRING
+
 void SpringArraySetup() {
   background(255);
   springs = new Orb[NUM_ORBS];
@@ -107,140 +144,6 @@ void SpringArraySetup() {
       int(random(256)),
       int(random(256))
       );
-  }
-}
-
-void windTunnelSetup() {
-  wind = new PVector(0.3, 0);
-  gravity = new PVector(0, 0.1);
-}
-
-
-void setupHouseParty() {
-  friends = new Orb[10];
-  for (int i = 0; i < friends.length; i++) {
-    friends[i] = new Orb(random(100, 700), random(100, 700), random(30, 50));
-    friends[i].velocity = new PVector(random(-2, 2), random(-2, 2));
-  }
-}
-
-// DRAW LOOP
-
-void draw() {
-  if (toggles[GRAV]) {
-    runGravity();
-  }
-  if (toggles[SPRING]) {
-    runSpring();
-  }
-  if (toggles[WINDTUNNEL]) {
-    runWindTunnel();
-  }
-  if (toggles[HOUSEPARTY]) {
-    runHouseParty();
-  }
-  if (toggles[COMBO]) {
-    runCombo();
-  }
-  drawBoxes();
-}
-
-// KEY CONTROLS
-
-void keyPressed() {
-
-  if (key == '1') {
-    toggles[GRAV] = !toggles[GRAV];
-    if (toggles[GRAV]) GravitySetup();
-  }
-
-  if (key == '2') {
-    toggles[SPRING] = !toggles[SPRING];
-    if (toggles[SPRING]) SpringArraySetup();
-  }
-  if (key == '+') {
-    SPRING_K += 0.001;
-    print(SPRING_K);
-  }
-
-  if (key == '-') {
-    SPRING_K -= 0.001;
-    print(SPRING_K);
-  }
-
-  if (key == '3') {
-    toggles[WINDTUNNEL] = !toggles[WINDTUNNEL];
-    if (toggles[WINDTUNNEL]) windTunnelSetup();
-  }
-
-  if (key == '4') {
-    toggles[COMBO] = !toggles[COMBO];
-    if (toggles[COMBO]) comboSetup();
-  }
-
-  if (key == '5') {
-    toggles[HOUSEPARTY] = !toggles[HOUSEPARTY];
-    if (toggles[HOUSEPARTY]) {
-      toggles[MOVING] = true;
-    }
-  }
-
-  if (key == ' ') {
-    toggles[MOVING] = !toggles[MOVING];
-  }
-
-  if (key == 'b' || key == 'B') {
-    toggles[BOUNCE] = !toggles[BOUNCE];
-  }
-  if (keyCode == UP && (toggles[GRAV] || toggles[COMBO])) {
-    timeScale *= 1.2;
-  }
-  if (keyCode == DOWN && (toggles[GRAV] || toggles[COMBO])) {
-    timeScale *= 0.8;
-  }
-}
-
-
-void mousePressed() {
-  if (toggles[WINDTUNNEL]) {
-    if (mouseX >= 160 && mouseX <= 260 && mouseY >= 690 && mouseY <= 790) {
-      test = new Orb(400, 300, 100, random(MIN_MASS, MAX_MASS));
-      D_COEF = .5;
-    } else if (mouseX >= 440 && mouseX <= 540 && mouseY >= 690 && mouseY <= 790) {
-      test = new teardrop(400, 300, 100, random(MIN_MASS, MAX_MASS));
-      D_COEF = .045;
-    } else if (mouseX >= 20 && mouseX <= 120 && mouseY >= 690 && mouseY <= 790) {
-      test = new rectangle(400, 300, 100, random(MIN_MASS, MAX_MASS));
-      D_COEF = .295;
-    } else if (mouseX >= 300 && mouseX <= 400 && mouseY >= 690 && mouseY <= 790) {
-      test = new triangle(400, 300, 150, random(MIN_MASS, MAX_MASS));
-      D_COEF = 1.14;
-    }
-    if (key == 'b' || key == 'B') { // need rto make a new bounce function just for windtunnel
-      test.move(true);
-    }
-  }
-}
-
-
-
-// SIMULATIONS
-
-void runGravity() {
-  background(0);
-  textSize(30);
-  text("use up/down arrow keys to move faster/slower", 20, 40);
-  text("CAUTION: you may lose planets", 20, 70);
-  sun.display();
-  for ( int i =0; i < stars.length; i ++) {
-    stars[i].display();
-  }
-  for (Orb p : planets) {
-    if (toggles[MOVING]) p.move(toggles[BOUNCE]);
-
-    PVector force = p.getGravity(sun, G_CONSTANT);
-    p.applyForce(force);
-    p.display();
   }
 }
 
@@ -266,6 +169,13 @@ void runSpring() {
   springs[springs.length -1].applyForce(f);
   springs[0].applyForce(f);
   drawSpring(springs[springs.length -1], springs[0]);
+}
+
+// WIND TUNNEL
+
+void windTunnelSetup() {
+  wind = new PVector(0.3, 0);
+  gravity = new PVector(0, 0.1);
 }
 
 void runWindTunnel() {
@@ -316,6 +226,8 @@ void runWindTunnel() {
     }
   }
 }
+
+// COMBINATION
 
 void comboSetup() {
   background(0);
@@ -383,6 +295,16 @@ void runCombo() {
   }
 }
 
+// HOUSE PARTY
+
+void setupHouseParty() {
+  friends = new Orb[10];
+  for (int i = 0; i < friends.length; i++) {
+    friends[i] = new Orb(random(100, 700), random(100, 700), random(30, 50));
+    friends[i].velocity = new PVector(random(-2, 2), random(-2, 2));
+  }
+}
+
 void runHouseParty() {
   background(173, 130, 95);
 
@@ -421,7 +343,86 @@ void runHouseParty() {
   }
 }
 
-// HELPERS
+
+// KEY CONTROLS
+
+void keyPressed() {
+
+  if (key == '1') {
+    toggles[GRAV] = !toggles[GRAV];
+    if (toggles[GRAV]) GravitySetup();
+  }
+
+  if (key == '2') {
+    toggles[SPRING] = !toggles[SPRING];
+    if (toggles[SPRING]) SpringArraySetup();
+  }
+  if (key == '+') {
+    SPRING_K += 0.001;
+    print(SPRING_K);
+  }
+
+  if (key == '-') {
+    SPRING_K -= 0.001;
+    print(SPRING_K);
+  }
+
+  if (key == '3') {
+    toggles[WINDTUNNEL] = !toggles[WINDTUNNEL];
+    if (toggles[WINDTUNNEL]) windTunnelSetup();
+  }
+
+  if (key == '4') {
+    toggles[COMBO] = !toggles[COMBO];
+    if (toggles[COMBO]) comboSetup();
+  }
+
+  if (key == '5') {
+    toggles[HOUSEPARTY] = !toggles[HOUSEPARTY];
+    if (toggles[HOUSEPARTY]) {
+      toggles[MOVING] = true;
+      setupHouseParty();
+    }
+  }
+
+  if (key == ' ') {
+    toggles[MOVING] = !toggles[MOVING];
+  }
+
+  if (key == 'b' || key == 'B') {
+    toggles[BOUNCE] = !toggles[BOUNCE];
+  }
+  if (keyCode == UP && (toggles[GRAV] || toggles[COMBO])) {
+    timeScale *= 1.2;
+  }
+  if (keyCode == DOWN && (toggles[GRAV] || toggles[COMBO])) {
+    timeScale *= 0.8;
+  }
+}
+
+
+void mousePressed() {
+  if (toggles[WINDTUNNEL]) {
+    if (mouseX >= 160 && mouseX <= 260 && mouseY >= 690 && mouseY <= 790) {
+      test = new Orb(400, 300, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = .5;
+    } else if (mouseX >= 440 && mouseX <= 540 && mouseY >= 690 && mouseY <= 790) {
+      test = new teardrop(400, 300, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = .045;
+    } else if (mouseX >= 20 && mouseX <= 120 && mouseY >= 690 && mouseY <= 790) {
+      test = new rectangle(400, 300, 100, random(MIN_MASS, MAX_MASS));
+      D_COEF = .295;
+    } else if (mouseX >= 300 && mouseX <= 400 && mouseY >= 690 && mouseY <= 790) {
+      test = new triangle(400, 300, 150, random(MIN_MASS, MAX_MASS));
+      D_COEF = 1.14;
+    }
+    if (key == 'b' || key == 'B') { // need rto make a new bounce function just for windtunnel
+      test.move(true);
+    }
+  }
+}
+
+// EXTRA FUNCTIONS
 
 void drawSpring(Orb o0, Orb o1) {
   float d = o0.center.dist(o1.center);

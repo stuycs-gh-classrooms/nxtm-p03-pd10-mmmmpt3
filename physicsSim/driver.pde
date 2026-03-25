@@ -70,21 +70,21 @@ void GravitySetup() {
   planets = new Orb[8];
   stars = new FixedOrb[100];
 
-  planets[0] = new Orb(width/2 + 30, height/2, 6, 0.000034);
+  planets[0] = new Orb(width/2 + 30, height/2, 6, 0.000034);//mercury
   planets[0].setColor(229, 229, 229);
-  planets[1] = new Orb(width/2 + 50, height/2, 10, 0.00048);
+  planets[1] = new Orb(width/2 + 50, height/2, 10, 0.00048);//venus
   planets[1].setColor(248, 226, 176);
-  planets[2] = new Orb(width/2 + 70, height/2, 12, 0.0006);
+  planets[2] = new Orb(width/2 + 70, height/2, 12, 0.0006);//earth
   planets[2].setColor(0, 0, 160);
-  planets[3] = new Orb(width/2 + 90, height/2, 10, 0.000064);
+  planets[3] = new Orb(width/2 + 90, height/2, 10, 0.000064);//mars
   planets[3].setColor(173, 98, 66);
-  planets[4] = new Orb(width/2 + 130, height/2, 30, 0.19);
+  planets[4] = new Orb(width/2 + 130, height/2, 30, 0.19);//jupiter
   planets[4].setColor(209, 167, 127);
-  planets[5] = new Orb(width/2 + 170, height/2, 24, 0.056);
+  planets[5] = new Orb(width/2 + 170, height/2, 24, 0.056);//saturn
   planets[5].setColor(252, 238, 173);
-  planets[6] = new Orb(width/2 + 210, height/2, 16, 0.0088);
+  planets[6] = new Orb(width/2 + 210, height/2, 16, 0.0088);//uranus
   planets[6].setColor(172, 229, 238);
-  planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);
+  planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);//neptune
   planets[7].setColor(124, 183, 187);
 
 

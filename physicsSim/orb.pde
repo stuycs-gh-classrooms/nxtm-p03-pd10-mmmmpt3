@@ -70,13 +70,14 @@ class Orb {
   // PHYSICS
 
   void move(boolean bounce) {
+    float dt = 0.1 * timeScale;
     if (bounce) {
       xBounce();
       yBounce();
     }
 
-    velocity.add(acceleration);
-    center.add(velocity);
+    velocity.add(PVector.mult(acceleration, dt));
+    center.add(PVector.mult(velocity, dt));
     acceleration.mult(0);
   }
 
@@ -107,18 +108,22 @@ class Orb {
     strength = strength / pow(r, 2);
 
     PVector force = other.center.copy();
-    force.sub(center); 
+    force.sub(center);
     force.mult(strength);
 
     //friendship scaling
     int index = other.ranking.indexOf(id);
     float friendship = map(index, 0, 9, -1, 1);
-    force.normalize();
+    if (friendship < 0) {
+      friendship *= 5;   //strong repulsion
+    } else {
+      friendship *= 0.4; //weaker attraction
+    }
     force.mult(friendship);
-
+    force.normalize();
     //tone down chaos
-    force.mult(0.01);
-    
+    force.mult(0.2);
+
     force.limit(30);
     return force;
   }
@@ -155,8 +160,7 @@ class Orb {
       velocity.y *= -1;
       center.y = height - bsize/2;
       return true;
-    }
-    else if (center.y < bsize/2) {
+    } else if (center.y < bsize/2) {
       velocity.y *= -1;
       center.y = bsize/2;
       return true;
@@ -169,37 +173,32 @@ class Orb {
       center.x = width - bsize/2;
       velocity.x *= -1;
       return true;
-    }
-    else if (center.x < bsize/2) {
+    } else if (center.x < bsize/2) {
       center.x = bsize/2;
       velocity.x *= -1;
       return true;
     }
     return false;
-  } 
+  }
 
-void dragForceBounce(){
-  if (center.y > 600 - bsize) {
+  void dragForceBounce() {
+    if (center.y > 600 - bsize) {
       velocity.y *= -1;
       //center.y = height - bsize/2;
-
-      
     }//bottom bounce
     else if (center.y < 100 + bsize/2) {
       velocity.y*= -1;
       //center.y = bsize/2;
     }
-    
+
     if (center.x > width - bsize/2 - 20) {
       //center.x = width - bsize/2;
       velocity.x *= -1;
-     
     } else if (center.x < 20 + bsize) {
       //center.x = bsize/2;
       velocity.x *= -1;
-     
     }
-}
+  }
 
   boolean collisionCheck(Orb other) {
     return center.dist(other.center) <= (bsize/2 + other.bsize/2);

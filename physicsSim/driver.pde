@@ -12,11 +12,13 @@ PVector wind;
 PVector gravity;
 PVector push;
 
+
 FixedOrb sun;
 Orb[] planets;
 Orb[] springs;
 Orb[] friends;
 Orb test;
+FixedOrb [] stars;
 
 int NUM_ORBS = 10;
 int MIN_SIZE = 10;
@@ -47,22 +49,36 @@ void setup() {
 void GravitySetup() {
   background(0);
   sun = new FixedOrb(width/2, height/2, 35, 200, 255, 171, 0);
-
   planets = new Orb[8];
+  stars = new FixedOrb[100];
 
   planets[0] = new Orb(width/2 + 30, height/2, 6, 0.000034);
+  planets[0].setColor(229, 229, 229);
   planets[1] = new Orb(width/2 + 50, height/2, 10, 0.00048);
+  planets[1].setColor(248, 226, 176);
   planets[2] = new Orb(width/2 + 70, height/2, 12, 0.0006);
+  planets[2].setColor(0, 0, 160);
   planets[3] = new Orb(width/2 + 90, height/2, 10, 0.000064);
+  planets[3].setColor(173, 98, 66);
   planets[4] = new Orb(width/2 + 130, height/2, 30, 0.19);
+  planets[4].setColor(209, 167, 127);
   planets[5] = new Orb(width/2 + 170, height/2, 24, 0.056);
+  planets[5].setColor(252, 238, 173);
   planets[6] = new Orb(width/2 + 210, height/2, 16, 0.0088);
+  planets[6].setColor(172, 229, 238);
   planets[7] = new Orb(width/2 + 250, height/2, 16, 0.0108);
+  planets[7].setColor(124, 183, 187);
 
   for (int i = 0; i < planets.length; i++) {
     float r = planets[i].center.dist(sun.center);
     float v = sqrt(G_CONSTANT * sun.mass / r);
     planets[i].velocity = new PVector(-v, 0);
+  }
+  for ( int i =0; i < stars.length; i ++) {
+
+    stars[i]= new FixedOrb(int(random(width)),
+      int(random(height)), 5, 200, 255, 171, 0);
+    stars[i].setColor(255, 255, 255);
   }
 }
 
@@ -76,19 +92,18 @@ void SpringArraySetup() {
       random(height),
       int(random(MIN_SIZE, MAX_SIZE)),
       random(MIN_MASS, MAX_MASS)
-    );
+      );
     springs[i].setColor(
       int(random(256)),
       int(random(256)),
       int(random(256))
-    );
+      );
   }
 }
 
 void windTunnelSetup() {
-  wind = new PVector(0.1, 0);
+  wind = new PVector(0.3, 0);
   gravity = new PVector(0, 0.1);
-  
 }
 
 
@@ -121,6 +136,17 @@ void keyPressed() {
     toggles[SPRING] = !toggles[SPRING];
     if (toggles[SPRING]) SpringArraySetup();
   }
+  if (key == '+') {
+    SPRING_K += 0.001;
+    print(SPRING_K);
+  }
+
+  if (key == '-') {
+    SPRING_K -= 0.001;
+    print(SPRING_K);
+  }
+
+
 
   if (key == '3') {
     toggles[WINDTUNNEL] = !toggles[WINDTUNNEL];
@@ -138,29 +164,27 @@ void keyPressed() {
   if (key == 'b' || key == 'B') {
     toggles[BOUNCE] = !toggles[BOUNCE];
   }
+}
 
-  //wind tunnel shapes
+
+void mousePressed(){
   if (toggles[WINDTUNNEL]) {
-    if (key == 'o') {
-      test = new Orb(400, 390, 100, random(MIN_MASS, MAX_MASS));
+    if (mouseX >= 160 && mouseX <= 260 && mouseY >= 690 && mouseY <= 790) {
+      test = new Orb(400, 300, 100, random(MIN_MASS, MAX_MASS));
       D_COEF = .5;
-    }
-    else if (key == 'd') {
-      test = new teardrop(400, 390, 100, random(MIN_MASS, MAX_MASS));
+    } else if (mouseX >= 440 && mouseX <= 540 && mouseY >= 690 && mouseY <= 790) {
+      test = new teardrop(400, 300, 100, random(MIN_MASS, MAX_MASS));
       D_COEF = .045;
-    }
-    else if (key == 'r') {
-      test = new rectangle(400, 390, 100, random(MIN_MASS, MAX_MASS));
+    } else if (mouseX >= 20 && mouseX <= 120 && mouseY >= 690 && mouseY <= 790) {
+      test = new rectangle(400, 300, 100, random(MIN_MASS, MAX_MASS));
       D_COEF = .295;
-    }
-    else if (key == 't') {
-      test = new triangle(400, 390, 100, random(MIN_MASS, MAX_MASS));
+    } else if (mouseX >= 300 && mouseX <= 400 && mouseY >= 690 && mouseY <= 790) {
+      test = new triangle(400, 300, 150, random(MIN_MASS, MAX_MASS));
       D_COEF = 1.14;
     }
-    if(key == 'b' || key == 'B') { // need rto make a new bounce function just for windtunnel
-    test.move(true);  
-  }
-
+    if (key == 'b' || key == 'B') { // need rto make a new bounce function just for windtunnel
+      test.move(true);
+    }
   }
 }
 
@@ -171,7 +195,9 @@ void keyPressed() {
 void runGravity() {
   background(0);
   sun.display();
-
+  for ( int i =0; i < stars.length; i ++) {
+    stars[i].display();
+  }
   for (Orb p : planets) {
     if (toggles[MOVING]) p.move(false);
 
@@ -188,7 +214,7 @@ void runSpring() {
     springs[i].display();
 
     if (toggles[MOVING]) {
-      springs[i].move(toggles[BOUNCE]);
+      springs[i].move(true);
     }
     if (i > 0) {
       PVector f = springs[i].getSpring(springs[i-1], SPRING_LENGTH, SPRING_K);
@@ -196,22 +222,57 @@ void runSpring() {
       drawSpring(springs[i-1], springs[i]);
     }
   }
+  PVector f = springs[springs.length -1 ].getSpring(springs[0], SPRING_LENGTH, SPRING_K);
+  springs[springs.length -1].applyForce(f);
+  springs[0].applyForce(f);
+  drawSpring(springs[springs.length -1], springs[0]);
 }
 
 void runWindTunnel() {
   background(97);
+  noStroke();
   fill(200);
   rect(20, 100, width - 40, 500);
+  
+  fill(200);
+  rect(20, 620, 520, 60);
+  textSize(50);
+  text("PRESS SPACE to run simulation", 60, 70);
+  text("CHOOSE", 600, 660);
+  text("A SHAPE", 600, 720);
+  text("TO TEST", 600, 780);
+  square(20, 690, 100);
+  fill(201, 45, 97);
+  rect(45, 700, 50, 80);
 
+  fill(200);
+  square(160, 690, 100);
+  fill(255, 255, 255);
+  circle(210, 740, 60);
+
+  fill(200);
+  square(300, 690, 100);
+  fill(255, 205, 0);
+  triangle(325, 715, 325, 775, 365, 745);
+
+  fill(200);
+  square(440, 690, 100);
+  fill(68, 221, 232);
+  ellipse(490, 740, 40, 80);
+  
+ 
+  
   if (test != null) {
     test.display();
+    fill(0);
+    text(test.velocity.toString(), 20, 665);
 
     if (toggles[MOVING]) {
-      test.applyForce(gravity);
+      //test.applyForce(gravity);
       test.applyForce(wind);
       test.applyForce(test.getDragForce(D_COEF));
       test.move(false);
-      //test.dragForceBounce();
+      test.dragForceBounce();
     }
   }
 }
@@ -254,16 +315,62 @@ void runStart() {
   text("Physics Simulations", 30, 80);
 
   textSize(50);
-  text("1: Gravity", 350, 160);
+  text("1: Gravity", 350, 180);
+  fill(0);
   square(230, 120, 100);
-  text("2: Spring", 350, 260);
+  fill(249,215, 28);
+  circle( 280, 170, 13);
+  
+  fill(248, 226, 176);
+  circle( 290, 170, 8);
+  
+  fill(0, 0, 160);
+  circle( 300, 170, 10);
+  
+   fill(173, 98, 66);
+  circle( 310, 170, 12); 
+  
+  fill(209, 167, 127);
+  circle( 318, 170, 10); 
+  
+  text("2: Spring", 350, 280);
+  fill(255);
   square(230, 220, 100);
-  text("3: Wind Tunnel", 350, 360);
+  fill(209, 34, 56);
+  circle(255, 300, 30);
+  fill(34, 230, 67);
+  circle(310, 240, 30); 
+  fill(0); 
+  line(245, 300, 310, 240);
+  
+  text("3: Wind Tunnel", 350, 380);
+  fill(200);
   square(230, 320, 100);
-  text("4: Combination", 350, 460);
+  
+  fill(201, 45, 97);
+  rect(240, 340, 20, 30);
+
+  
+  fill(255, 255, 255);
+  circle(300, 345, 30);
+
+
+  fill(255, 205, 0);
+  triangle(240, 380, 240, 400, 260, 390);
+
+ 
+  fill(68, 221, 232);
+  ellipse(300, 395, 20, 40);
+  
+  fill(255);
+  text("4: Combination", 350, 480);
   square(230, 420, 100);
-  text("5: House Party", 350, 560);
+  fill(0);
+  text("?", 270, 490);
+  fill(255);
+  text("5: House Party", 350, 580);
   square(230, 520, 100);
-  text("Space: Move", 200, 710);
-  text("B: Bounce", 200, 770);
+  text( "GENERAL CONTROLS",170, 690);
+  text("Space: Move", 20, 740);
+  text("B: Bounce", 520, 740);
 }

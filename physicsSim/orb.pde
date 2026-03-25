@@ -176,7 +176,30 @@ class Orb {
       return true;
     }
     return false;
-  }
+  } 
+
+void dragForceBounce(){
+  if (center.y > 600 - bsize) {
+      velocity.y *= -1;
+      //center.y = height - bsize/2;
+
+      
+    }//bottom bounce
+    else if (center.y < 100 + bsize/2) {
+      velocity.y*= -1;
+      //center.y = bsize/2;
+    }
+    
+    if (center.x > width - bsize/2 - 20) {
+      //center.x = width - bsize/2;
+      velocity.x *= -1;
+     
+    } else if (center.x < 20 + bsize) {
+      //center.x = bsize/2;
+      velocity.x *= -1;
+     
+    }
+}
 
   boolean collisionCheck(Orb other) {
     return center.dist(other.center) <= (bsize/2 + other.bsize/2);
